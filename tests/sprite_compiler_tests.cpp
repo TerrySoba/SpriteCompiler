@@ -1,4 +1,4 @@
-#include <catch2/catch_test_macros.hpp>
+#include <catch2/catch_all.hpp>
 
 #include "compiled_sprite.h"
 
@@ -67,6 +67,8 @@ void deleteFileIfExists(const std::string& filename)
     }
 }
 
+
+
 TEST_CASE("sprite names are normalized to uppercase", "[sprite_compiler]")
 {
     int bufferWidth = 320;
@@ -74,24 +76,32 @@ TEST_CASE("sprite names are normalized to uppercase", "[sprite_compiler]")
     int targetPosX = 10;
     int targetPosY = 10;
 
-    printf("Testdata dir: %s\n", TEST_DATA_DIR);
+    std::string resultFile = "RESULT.BIN";
+    std::string compiledSpriteFile = "compiled.spr";
 
-    CompiledSprite sprite(TEST_DATA_DIR "/guyframe.tga", 320);
+    // printf("Testdata dir: %s\n", TEST_DATA_DIR);
+
+    std::string spriteFilePath = std::string(TEST_DATA_DIR) + std::string("/") +
+        GENERATE("guyframe.tga", "porframe.tga");
+
+    CompiledSprite sprite(spriteFilePath.c_str(), 320);
     REQUIRE(sprite.width() > 0);
     REQUIRE(sprite.height() > 0);
     
     const std::vector<char>& compiledFunction = sprite.getCompiledFunction();
     REQUIRE(!compiledFunction.empty());
 
-    writeVectorToDisk(compiledFunction, "output.bin");
+    printf("Sprite \"%s\" compiled to %zu bytes of machine code.\n", spriteFilePath.c_str(), compiledFunction.size());
 
-    deleteFileIfExists("BUFFER.BIN");
+    writeVectorToDisk(compiledFunction, compiledSpriteFile);
+
+    deleteFileIfExists(resultFile);
 
     // This command executes the compiled sprite in a DOS environment and writes the output to buffer.bin
     system(PROJECT_BASE_DIR "/run_dos_test.sh");
 
     // Now read buffer and check if compiled sprite executed correctly
-    std::vector<char> outputData = readVectorFromDisk("BUFFER.BIN");
+    std::vector<char> outputData = readVectorFromDisk(resultFile.c_str());
 
     // recreate the original image data from the sprite
     std::vector<char> buffer(bufferWidth * bufferHeight);

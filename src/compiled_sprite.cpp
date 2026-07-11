@@ -348,22 +348,21 @@ uint32_t compileDataDirectOffset(char* dst, uint32_t dstSize, const PixelSource&
 }
 
 
+// uint32_t compileData(char* dst, uint32_t dstSize, const PixelSource& image, int16_t targetWidth)
+// {
+//     // uint32_t directOffsetSize = compileDataDirectOffset(NULL, 0, image, targetWidth);
+//     // uint32_t lineIncrementSize = compileDataLineIncrement(NULL, 0, image, targetWidth);
 
-uint32_t compileData(char* dst, uint32_t dstSize, const PixelSource& image, int16_t targetWidth)
-{
-    // uint32_t directOffsetSize = compileDataDirectOffset(NULL, 0, image, targetWidth);
-    // uint32_t lineIncrementSize = compileDataLineIncrement(NULL, 0, image, targetWidth);
-
-    // if (lineIncrementSize < directOffsetSize)
-    // {
-    //     return compileDataLineIncrement(dst, dstSize, image, targetWidth);
-    // }
-    // else
-    // {
-    //     return compileDataDirectOffset(dst, dstSize, image, targetWidth);
-    // }
-    return compileDataLineIncrement(dst, dstSize, image, targetWidth);
-}
+//     // if (lineIncrementSize < directOffsetSize)
+//     // {
+//     //     return compileDataLineIncrement(dst, dstSize, image, targetWidth);
+//     // }
+//     // else
+//     // {
+//     //     return compileDataDirectOffset(dst, dstSize, image, targetWidth);
+//     // }
+//     return compileDataLineIncrement(dst, dstSize, image, targetWidth);
+// }
 
 std::vector<char> CompiledSprite::compileSprite(const PixelSource& image, int16_t targetWidth)
 {
