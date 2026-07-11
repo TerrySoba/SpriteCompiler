@@ -1,0 +1,11 @@
+build/
+3rdparty/TC
+dos/open_watcom/opt
+
+*.o
+*.d
+*.lnk
+*.exe
+*.EXE
+
+
