@@ -9,7 +9,12 @@
 int main(int argc, char** argv) {
     try
     {
-        CLI::App app{"SpriteCompiler"};
+        CLI::App app{
+            "This tool takes a TGA image and a JSON animation file "
+            "and compiles them into a single binary animation file. "
+            "The image and the json file must be exported from Aseprite or LibreSprite. "
+            "The output file contains the sprite in form of 8086 machine code that can "
+            "be drawn very quickly on a DOS machine."};
 
         std::string tgaInputFile;
         std::string outputFile;
