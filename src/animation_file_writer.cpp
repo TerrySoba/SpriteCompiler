@@ -3,8 +3,12 @@
 #include <cstdio>
 #include <stdexcept>
 
-void writeAnimationFile(const std::string& filename, const AnimationData& animationData)
+void writeAnimationFile(const std::string& filename, const AnimationData& animationData, const std::vector<std::vector<char>>& compiledFrames)
 {
+    if (animationData.frames.size() != compiledFrames.size()) {
+        throw std::runtime_error("Number of frames in animationData does not match number of compiled frames.");
+    }
+
     FILE* file = fopen(filename.c_str(), "wb");
     if (!file) {
         throw std::runtime_error("Failed to open file for writing: " + filename);
@@ -37,6 +41,13 @@ void writeAnimationFile(const std::string& filename, const AnimationData& animat
         uint16_t nameLength = static_cast<uint16_t>(tag.name.size());
         fwrite(&nameLength, sizeof(nameLength), 1, file);
         fwrite(tag.name.c_str(), sizeof(char), nameLength, file);
+    }
+
+    // Write the compiled frames
+    for (const auto& compiledFrame : compiledFrames) {
+        uint16_t frameSize = static_cast<uint16_t>(compiledFrame.size());
+        fwrite(&frameSize, sizeof(frameSize), 1, file);
+        fwrite(compiledFrame.data(), sizeof(char), frameSize, file);
     }
 
     fclose(file);

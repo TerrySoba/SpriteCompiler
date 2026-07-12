@@ -21,6 +21,8 @@ add_library(sprite_compiler_lib
     src/tga_image.h
     src/tga_image.cpp
     src/exception.cpp
+    src/compile_animation_frames.h
+    src/compile_animation_frames.cpp
 )
 
 target_include_directories(sprite_compiler_lib

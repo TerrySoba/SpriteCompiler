@@ -2,4 +2,4 @@
 
 #include "animation_json_parser.h"
 
-void writeAnimationFile(const std::string& filename, const AnimationData& animationData);
+void writeAnimationFile(const std::string& filename, const AnimationData& animationData, const std::vector<std::vector<char>>& compiledFrames);
