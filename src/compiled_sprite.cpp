@@ -347,7 +347,7 @@ uint32_t compileDataDirectOffset(char* dst, uint32_t dstSize, const PixelSource&
     return functionSize + strlen(functionHeader) + strlen(functionEnd) + 1; //  +1 for null termination
 }
 
-std::vector<char> CompiledSprite::compileSprite(const PixelSource& image, int16_t targetWidth)
+std::vector<char> CompiledSprite::compileSprite(const PixelSource& image, uint16_t targetWidth)
 {
     size_t compiledSpriteSizeDirectOffset = compileDataDirectOffset(NULL, 0, image, targetWidth);
     size_t compiledSpriteSizeLineIncrement = compileDataLineIncrement(NULL, 0, image, targetWidth);
@@ -369,22 +369,22 @@ std::vector<char> CompiledSprite::compileSprite(const PixelSource& image, int16_
 class MyPixelSource : public PixelSource
 {
 public:
-    MyPixelSource(const char* data, int16_t width, int16_t height) :
+    MyPixelSource(const char* data, uint16_t width, uint16_t height) :
         m_data(data), m_width(width), m_height(height)
     {
     }
 
-    virtual int16_t width() const
+    virtual uint16_t width() const
     {
         return m_width;
     }
 
-    virtual int16_t height() const
+    virtual uint16_t height() const
     {
         return m_height;
     }
 
-    virtual char pixel(int16_t x, int16_t y) const
+    virtual char pixel(uint16_t x, uint16_t y) const
     {
         return m_data[m_width * y + x];
     }
@@ -396,11 +396,11 @@ public:
 
 private:
     const char* m_data;
-    int16_t m_width, m_height;
+    uint16_t m_width, m_height;
 };
 
 
-CompiledSprite::CompiledSprite(const char* filename, int16_t targetWidth)
+CompiledSprite::CompiledSprite(const char* filename, uint16_t targetWidth)
 {
     TgaImage img(filename);
     m_width = img.width();
@@ -413,15 +413,15 @@ CompiledSprite::CompiledSprite(const char* filename, int16_t targetWidth)
     memcpy(m_originalData.data(), img.data(), m_originalData.size());
 }
 
-CompiledSprite::CompiledSprite(const PixelSource& image, int16_t targetWidth)
+CompiledSprite::CompiledSprite(const PixelSource& image, uint16_t targetWidth)
 {
     m_width = image.width();
     m_height = image.height();
     m_compiledFunction = compileSprite(image, targetWidth);
 
     m_originalData.resize(image.width() * image.height());
-    for (int16_t y = 0; y < image.height(); ++y) {
-        for (int16_t x = 0; x < image.width(); ++x) {
+    for (uint16_t y = 0; y < image.height(); ++y) {
+        for (uint16_t x = 0; x < image.width(); ++x) {
             m_originalData[y * image.width() + x] = image.pixel(x, y);
         }
     }
@@ -431,12 +431,12 @@ CompiledSprite::~CompiledSprite()
 {
 }
 
-int16_t CompiledSprite::width() const
+uint16_t CompiledSprite::width() const
 {
     return m_width;
 }
 
-int16_t CompiledSprite::height() const
+uint16_t CompiledSprite::height() const
 {
     return m_height;
 }

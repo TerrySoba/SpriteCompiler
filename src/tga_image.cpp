@@ -84,7 +84,7 @@ void TgaImage::loadImage(const char* filename)
     if (size > m_dataSize)
     {
         free(m_data);
-        m_data = (int8_t*)malloc(size);
+        m_data = (char*)malloc(size);
         m_dataSize = size;
     }
     
@@ -123,8 +123,8 @@ void TgaImage::loadImage(const char* filename)
 
         for (int line = 0; line < height / 2; ++line)
         {
-            int8_t* aLine = &m_data[width * line];
-            int8_t* bLine = &m_data[width * (height - line - 1)];
+            char* aLine = &m_data[width * line];
+            char* bLine = &m_data[width * (height - line - 1)];
             memcpy(lineStore , aLine     , width);
             memcpy(aLine     , bLine     , width);
             memcpy(bLine     , lineStore , width);
@@ -141,17 +141,17 @@ TgaImage::~TgaImage()
     free(m_data);
 }
 
-int16_t TgaImage::width() const
+uint16_t TgaImage::width() const
 {
     return m_width;
 }
 
-int16_t TgaImage::height() const
+uint16_t TgaImage::height() const
 {
     return m_height;
 }
 
 char* TgaImage::data() const
 {
-    return (char*)m_data;
+    return m_data;
 }

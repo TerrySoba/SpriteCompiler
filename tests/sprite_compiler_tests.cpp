@@ -82,7 +82,7 @@ TEST_CASE("sprite names are normalized to uppercase", "[sprite_compiler]")
     // printf("Testdata dir: %s\n", TEST_DATA_DIR);
 
     std::string spriteFilePath = std::string(TEST_DATA_DIR) + std::string("/") +
-        GENERATE("guyframe.tga", "porframe.tga");
+        GENERATE("porframe.tga", "guyframe.tga");
 
     CompiledSprite sprite(spriteFilePath.c_str(), 320);
     REQUIRE(sprite.width() > 0);

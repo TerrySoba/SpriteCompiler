@@ -8,4 +8,4 @@
 std::vector<std::vector<char>> compileAnimationFrames(
     const std::string& tgaInputFile,
     const AnimationData& animationData,
-    int targetWidth);
+    uint16_t targetWidth);

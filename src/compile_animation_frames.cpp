@@ -6,22 +6,22 @@
 class FramePixelSource : public PixelSource
 {
 public:
-    FramePixelSource(const char* data, int16_t imageWidth, FrameData frame) :
+    FramePixelSource(const char* data, uint16_t imageWidth, FrameData frame) :
         m_data(data), m_frame(frame), m_imageWidth(imageWidth)
     {
     }
 
-    virtual int16_t width() const
+    virtual uint16_t width() const
     {
         return m_frame.w;
     }
 
-    virtual int16_t height() const
+    virtual uint16_t height() const
     {
         return m_frame.h;
     }
 
-    virtual char pixel(int16_t x, int16_t y) const
+    virtual char pixel(uint16_t x, uint16_t y) const
     {
         return m_data[m_imageWidth * (m_frame.y + y) + (m_frame.x + x)];
     }
@@ -34,14 +34,14 @@ public:
 private:
     const char* m_data;
     FrameData m_frame;
-    int16_t m_imageWidth;
+    uint16_t m_imageWidth;
 };
 
 
 std::vector<std::vector<char>> compileAnimationFrames(
     const std::string& tgaInputFile,
     const AnimationData& animationData,
-    int targetWidth)
+    uint16_t targetWidth)
 {
     // load the TGA image
     TgaImage img(tgaInputFile.c_str());

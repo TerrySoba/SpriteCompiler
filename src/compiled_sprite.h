@@ -22,12 +22,12 @@
 class CompiledSprite
 {
 public:
-    CompiledSprite(const char* filename, int16_t targetWidth);
-    CompiledSprite(const PixelSource& image, int16_t targetWidth);
+    CompiledSprite(const char* filename, uint16_t targetWidth);
+    CompiledSprite(const PixelSource& image, uint16_t targetWidth);
     virtual ~CompiledSprite();
 
-    virtual int16_t width() const;
-    virtual int16_t height() const;
+    virtual uint16_t width() const;
+    virtual uint16_t height() const;
 
     const std::vector<char>& getCompiledFunction() const
     {
@@ -40,16 +40,16 @@ public:
     }
 
 private:
-    std::vector<char> compileSprite(const PixelSource& image, int16_t targetWidth);
+    std::vector<char> compileSprite(const PixelSource& image, uint16_t targetWidth);
 
 private:
-    int16_t m_width, m_height;
+    uint16_t m_width, m_height;
     std::vector<char> m_compiledFunction;
     std::vector<char> m_originalData;
 };
 
-typedef void (*DrawCompiledSpritePtr)(char* img, int16_t targetWidth);
+typedef void (*DrawCompiledSpritePtr)(char* img, uint16_t targetWidth);
 
-// uint32_t compileData(char* dst, uint32_t dstSize, const PixelSource& image, int16_t targetWidth);
+// uint32_t compileData(char* dst, uint32_t dstSize, const PixelSource& image, uint16_t targetWidth);
 
 #endif
