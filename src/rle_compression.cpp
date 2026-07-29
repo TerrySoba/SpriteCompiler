@@ -1,0 +1,76 @@
+#include "rle_compression.h"
+
+std::vector<RLEChunk> compressRLE(const std::vector<uint8_t>& input, uint16_t width, uint16_t height, uint8_t transparentColor)
+{
+    std::vector<RLEChunk> chunks;
+    // Implement RLE compression algorithm here
+
+    for(uint16_t y = 0; y < height; ++y)
+    {
+        uint16_t rowStart = y * width;
+        uint16_t rowEnd = rowStart + width;
+
+        for(uint16_t x = rowStart; x < rowEnd;)
+        {
+            uint8_t currentColor = input[x];
+            uint8_t count = 1;
+
+            // Count consecutive pixels of the same color
+            while(x + count < rowEnd && input[x + count] == currentColor && count < 255)
+            {
+                ++count;
+            }
+
+            RLEChunk chunk;
+            if(currentColor == transparentColor)
+            {
+                chunk.type = RLE_TYPE_SKIP;
+                chunk.count = (x + count == rowEnd) ? 0 : count;
+                chunk.data.clear();
+            }
+            else if(count > 1)
+            {
+                chunk.type = RLE_TYPE_REPEAT;
+                chunk.count = count;
+                chunk.data.push_back(currentColor);
+            }
+            else
+            {
+                chunk.type = RLE_TYPE_CONSECUTIVE;
+                chunk.count = 1;
+                chunk.data.push_back(currentColor);
+            }
+
+            chunks.push_back(chunk);
+            x += count;
+        }
+    }
+
+    // Add an end chunk at the end of the sprite data
+    RLEChunk endChunk;
+    endChunk.type = RLE_TYPE_END;
+    endChunk.count = 0;
+    endChunk.data.clear();
+    chunks.push_back(endChunk);
+
+    return chunks;
+}
+
+
+std::vector<uint8_t> encodeRLE(const std::vector<RLEChunk>& chunks)
+{
+    std::vector<uint8_t> encodedData;
+
+    for(const auto& chunk : chunks)
+    {
+        uint8_t typeAndCount = static_cast<uint8_t>(chunk.type) | (chunk.count & 0b00111111);
+        encodedData.push_back(typeAndCount);
+
+        if(chunk.type == RLE_TYPE_CONSECUTIVE || chunk.type == RLE_TYPE_REPEAT)
+        {
+            encodedData.insert(encodedData.end(), chunk.data.begin(), chunk.data.end());
+        }
+    }
+
+    return encodedData;
+}
