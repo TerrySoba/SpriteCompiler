@@ -2,6 +2,7 @@
 
 #include "tga_image.h"
 #include "compiled_sprite.h"
+#include "rle_compression.h"
 
 class FramePixelSource : public PixelSource
 {
@@ -41,7 +42,8 @@ private:
 std::vector<std::vector<char>> compileAnimationFrames(
     const std::string& tgaInputFile,
     const AnimationData& animationData,
-    uint16_t targetWidth)
+    uint16_t targetWidth,
+    SpriteFormat format)
 {
     // load the TGA image
     TgaImage img(tgaInputFile.c_str());
@@ -57,9 +59,31 @@ std::vector<std::vector<char>> compileAnimationFrames(
     std::vector<std::vector<char>> compiledFrames;
     for (const auto& frame : animationData.frames)
     {
-        FramePixelSource frameSource(img.data(), img.width(), frame);
-        CompiledSprite compiledSprite(frameSource, targetWidth);
-        compiledFrames.push_back(compiledSprite.getCompiledFunction()); 
+        if (format == SpriteFormat::Rle)
+        {
+            FramePixelSource frameSource(img.data(), img.width(), frame);
+            std::vector<uint8_t> inputData;
+            for (uint16_t y = 0; y < frame.h; ++y)
+            {
+                for (uint16_t x = 0; x < frame.w; ++x)
+                {
+                    inputData.push_back(static_cast<uint8_t>(frameSource.pixel(x, y)));
+                }
+            }
+            auto compressedChunks = compressRLE(inputData, frame.w, frame.h, frameSource.transparentColor());
+            auto encodedData = encodeRLE(compressedChunks);
+            compiledFrames.push_back(std::vector<char>(encodedData.begin(), encodedData.end()));
+        }
+        else if (format == SpriteFormat::Compiled)
+        {
+            FramePixelSource frameSource(img.data(), img.width(), frame);
+            CompiledSprite compiledSprite(frameSource, targetWidth);
+            compiledFrames.push_back(compiledSprite.getCompiledFunction());
+        } 
+        else
+        {
+            throw std::runtime_error("Unsupported sprite format.");
+        }
     }
 
     return compiledFrames;

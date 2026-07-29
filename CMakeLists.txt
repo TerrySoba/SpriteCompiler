@@ -49,6 +49,7 @@ if(BUILD_TESTING)
     add_executable(sprite_compiler_tests
         tests/sprite_compiler_tests.cpp
         tests/rle_compression_test.cpp
+        tests/sprite_format_test.cpp
     )
 
     add_compile_definitions(sprite_compiler_tests PRIVATE
