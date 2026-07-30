@@ -3,19 +3,17 @@
 std::vector<RLEChunk> compressRLE(const std::vector<uint8_t>& input, uint16_t width, uint16_t height, uint8_t transparentColor)
 {
     std::vector<RLEChunk> chunks;
-    // Implement RLE compression algorithm here
 
     for(uint16_t y = 0; y < height; ++y)
     {
-        uint16_t rowStart = y * width;
-        uint16_t rowEnd = rowStart + width;
+        const uint16_t rowStart = y * width;
+        const uint16_t rowEnd = rowStart + width;
 
         for(uint16_t x = rowStart; x < rowEnd;)
         {
-            uint8_t currentColor = input[x];
+            const uint8_t currentColor = input[x];
             uint8_t count = 1;
 
-            // Count consecutive pixels of the same color
             while(x + count < rowEnd && input[x + count] == currentColor && count < 255)
             {
                 ++count;
@@ -26,7 +24,6 @@ std::vector<RLEChunk> compressRLE(const std::vector<uint8_t>& input, uint16_t wi
             {
                 chunk.type = RLE_TYPE_SKIP;
                 chunk.count = (x + count == rowEnd) ? 0 : count;
-                chunk.data.clear();
             }
             else if(count > 1)
             {
@@ -36,21 +33,36 @@ std::vector<RLEChunk> compressRLE(const std::vector<uint8_t>& input, uint16_t wi
             }
             else
             {
+                while(x + count < rowEnd && input[x + count] != transparentColor && count < 63)
+                {
+                    const uint8_t nextColor = input[x + count];
+
+                    if(x + count + 1 < rowEnd && input[x + count + 1] == nextColor)
+                    {
+                        break;
+                    }
+
+                    ++count;
+                }
+
                 chunk.type = RLE_TYPE_CONSECUTIVE;
-                chunk.count = 1;
-                chunk.data.push_back(currentColor);
+                chunk.count = count;
+                chunk.data.insert(chunk.data.end(), input.begin() + x, input.begin() + x + count);
             }
 
             chunks.push_back(chunk);
             x += count;
         }
+
+        if(chunks.empty() || chunks.back().type != RLE_TYPE_SKIP || chunks.back().count != 0)
+        {
+            chunks.push_back({ RLE_TYPE_SKIP, 0, {} });
+        }
     }
 
-    // Add an end chunk at the end of the sprite data
     RLEChunk endChunk;
     endChunk.type = RLE_TYPE_END;
     endChunk.count = 0;
-    endChunk.data.clear();
     chunks.push_back(endChunk);
 
     return chunks;
