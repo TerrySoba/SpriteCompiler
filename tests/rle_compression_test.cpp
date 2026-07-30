@@ -8,16 +8,13 @@ TEST_CASE("Zero-count skip chunk is emitted for transparent runs to the row end"
     std::vector<uint8_t> inputData = { 0x01, 0x00, 0x00, 0x00 };
     std::vector<RLEChunk> compressedData = compressRLE(inputData, 4, 1, 0x00);
 
-    REQUIRE(compressedData.size() == 3);
+    REQUIRE(compressedData.size() == 2);
     REQUIRE(compressedData[0].type == RLE_TYPE_CONSECUTIVE);
     REQUIRE(compressedData[0].count == 1);
-    REQUIRE(compressedData[1].type == RLE_TYPE_SKIP);
-    REQUIRE(compressedData[1].count == 0);
-    REQUIRE(compressedData[1].data.empty());
-    REQUIRE(compressedData[2].type == RLE_TYPE_END);
+    REQUIRE(compressedData[1].type == RLE_TYPE_END);
 }
 
-TEST_CASE("Each row ends with a zero-count skip chunk", "[rle_compression]")
+TEST_CASE("Only non-final rows end with a zero-count skip chunk", "[rle_compression]")
 {
     std::vector<uint8_t> inputData = {
         0x01, 0x02,
@@ -26,7 +23,7 @@ TEST_CASE("Each row ends with a zero-count skip chunk", "[rle_compression]")
 
     std::vector<RLEChunk> compressedData = compressRLE(inputData, 2, 2, 0x00);
 
-    REQUIRE(compressedData.size() == 5);
+    REQUIRE(compressedData.size() == 4);
 
     REQUIRE(compressedData[0].type == RLE_TYPE_CONSECUTIVE);
     REQUIRE(compressedData[0].count == 2);
@@ -39,10 +36,7 @@ TEST_CASE("Each row ends with a zero-count skip chunk", "[rle_compression]")
     REQUIRE(compressedData[2].count == 1);
     REQUIRE(compressedData[2].data == std::vector<uint8_t>({ 0x03 }));
 
-    REQUIRE(compressedData[3].type == RLE_TYPE_SKIP);
-    REQUIRE(compressedData[3].count == 0);
-
-    REQUIRE(compressedData[4].type == RLE_TYPE_END);
+    REQUIRE(compressedData[3].type == RLE_TYPE_END);
 }
 
 TEST_CASE("Good Case", "[rle_compression]")
@@ -132,12 +126,5 @@ TEST_CASE("Another Case", "[rle_compression]")
     REQUIRE(compressedData[6].count == 2);
     REQUIRE(compressedData[6].data == std::vector<uint8_t>({ 0x03, 0x04 }));
 
-    REQUIRE(compressedData[7].type == RLE_TYPE_SKIP);
-    REQUIRE(compressedData[7].count == 0);
-    REQUIRE(compressedData[7].data.empty());
-
-    REQUIRE(compressedData[8].type == RLE_TYPE_END);
-
-
-
+    REQUIRE(compressedData[7].type == RLE_TYPE_END);
 }

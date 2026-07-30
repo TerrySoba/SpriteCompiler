@@ -8,6 +8,7 @@ std::vector<RLEChunk> compressRLE(const std::vector<uint8_t>& input, uint16_t wi
     {
         const uint16_t rowStart = y * width;
         const uint16_t rowEnd = rowStart + width;
+        const bool isLastRow = (y + 1 == height);
 
         for(uint16_t x = rowStart; x < rowEnd;)
         {
@@ -22,6 +23,12 @@ std::vector<RLEChunk> compressRLE(const std::vector<uint8_t>& input, uint16_t wi
             RLEChunk chunk;
             if(currentColor == transparentColor)
             {
+                if(isLastRow && x + count == rowEnd)
+                {
+                    x += count;
+                    break;
+                }
+
                 chunk.type = RLE_TYPE_SKIP;
                 chunk.count = (x + count == rowEnd) ? 0 : count;
             }
@@ -54,7 +61,7 @@ std::vector<RLEChunk> compressRLE(const std::vector<uint8_t>& input, uint16_t wi
             x += count;
         }
 
-        if(chunks.empty() || chunks.back().type != RLE_TYPE_SKIP || chunks.back().count != 0)
+        if(!isLastRow && (chunks.empty() || chunks.back().type != RLE_TYPE_SKIP || chunks.back().count != 0))
         {
             chunks.push_back({ RLE_TYPE_SKIP, 0, {} });
         }
