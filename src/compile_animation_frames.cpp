@@ -59,7 +59,10 @@ std::vector<std::vector<char>> compileAnimationFrames(
     std::vector<std::vector<char>> compiledFrames;
     for (const auto& frame : animationData.frames)
     {
-        if (format == SpriteFormat::Rle)
+
+        std::vector<char> rleDataBuffer = {'R'}; // 'R' is for RLE
+        std::vector<char> compiledDataBuffer = {'C'}; // 'C' is for Compiled
+
         {
             FramePixelSource frameSource(img.data(), img.width(), frame);
             std::vector<uint8_t> inputData;
@@ -72,17 +75,33 @@ std::vector<std::vector<char>> compileAnimationFrames(
             }
             auto compressedChunks = compressRLE(inputData, frame.w, frame.h, frameSource.transparentColor());
             auto encodedData = encodeRLE(compressedChunks);
-            compiledFrames.push_back(std::vector<char>(encodedData.begin(), encodedData.end()));
+            rleDataBuffer.insert(rleDataBuffer.end(), encodedData.begin(), encodedData.end());
         }
-        else if (format == SpriteFormat::Compiled)
+
         {
             FramePixelSource frameSource(img.data(), img.width(), frame);
             CompiledSprite compiledSprite(frameSource, targetWidth);
-            compiledFrames.push_back(compiledSprite.getCompiledFunction());
-        } 
-        else
+            compiledDataBuffer.insert(compiledDataBuffer.end(), compiledSprite.getCompiledFunction().begin(), compiledSprite.getCompiledFunction().end());
+        }
+        
+        if (format == SpriteFormat::Automatic)
         {
-            throw std::runtime_error("Unsupported sprite format.");
+            if (rleDataBuffer.size() < compiledDataBuffer.size())
+            {
+                compiledFrames.push_back(rleDataBuffer);
+            }
+            else
+            {
+                compiledFrames.push_back(compiledDataBuffer);
+            }
+        }
+        else if (format == SpriteFormat::Rle)
+        {
+            compiledFrames.push_back(rleDataBuffer);
+        }
+        else if (format == SpriteFormat::Compiled)
+        {
+            compiledFrames.push_back(compiledDataBuffer);
         }
     }
 

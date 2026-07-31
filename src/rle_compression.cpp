@@ -76,13 +76,13 @@ std::vector<RLEChunk> compressRLE(const std::vector<uint8_t>& input, uint16_t wi
 }
 
 
-std::vector<uint8_t> encodeRLE(const std::vector<RLEChunk>& chunks)
+std::vector<char> encodeRLE(const std::vector<RLEChunk>& chunks)
 {
-    std::vector<uint8_t> encodedData;
+    std::vector<char> encodedData;
 
     for(const auto& chunk : chunks)
     {
-        uint8_t typeAndCount = static_cast<uint8_t>(chunk.type) | (chunk.count & 0b00111111);
+        char typeAndCount = static_cast<char>(static_cast<uint8_t>(chunk.type) | (chunk.count & 0b00111111));
         encodedData.push_back(typeAndCount);
 
         if(chunk.type == RLE_TYPE_CONSECUTIVE || chunk.type == RLE_TYPE_REPEAT)

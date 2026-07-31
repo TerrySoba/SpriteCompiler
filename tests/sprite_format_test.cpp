@@ -7,6 +7,8 @@ TEST_CASE("Sprite format parser accepts supported names", "[sprite_format]")
     REQUIRE(parseSpriteFormat("compiled") == SpriteFormat::Compiled);
     REQUIRE(parseSpriteFormat("RLE") == SpriteFormat::Rle);
     REQUIRE(parseSpriteFormat("rle") == SpriteFormat::Rle);
+    REQUIRE(parseSpriteFormat("automatic") == SpriteFormat::Automatic);
+    REQUIRE(parseSpriteFormat("AUTOMATIC") == SpriteFormat::Automatic);
 }
 
 TEST_CASE("Sprite format parser rejects unsupported values", "[sprite_format]")

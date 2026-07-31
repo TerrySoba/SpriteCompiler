@@ -7,7 +7,8 @@
 enum class SpriteFormat
 {
     Compiled,
-    Rle
+    Rle,
+    Automatic // use  format that produces smaller output
 };
 
 inline SpriteFormat parseSpriteFormat(const std::string& value)
@@ -25,6 +26,10 @@ inline SpriteFormat parseSpriteFormat(const std::string& value)
         return SpriteFormat::Rle;
     }
 
+    if (upperValue == "AUTOMATIC")
+    {
+        return SpriteFormat::Automatic;
+    }
     throw std::invalid_argument("Unsupported sprite format: " + value);
 }
 
@@ -36,6 +41,8 @@ inline const char* spriteFormatToString(SpriteFormat value)
             return "compiled";
         case SpriteFormat::Rle:
             return "rle";
+        case SpriteFormat::Automatic:
+            return "automatic";
     }
 
     return "unknown";

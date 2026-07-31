@@ -20,4 +20,4 @@ struct RLEChunk
 };
 
 std::vector<RLEChunk> compressRLE(const std::vector<uint8_t>& input, uint16_t width, uint16_t height, uint8_t transparentColor);
-std::vector<uint8_t> encodeRLE(const std::vector<RLEChunk>& chunks);
+std::vector<char> encodeRLE(const std::vector<RLEChunk>& chunks);
