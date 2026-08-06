@@ -27,7 +27,7 @@ int main(int argc, char** argv) {
         app.add_option("-a,--animation", animationFile, "Input animation file (JSON)")->required();
         app.add_option("-o,--output", outputFile, "Output file (animation + compiled sprite)")->required();
         app.add_option("-w,--width", targetWidth, "Width of the target buffer")->required();
-        app.add_option("-f,--format", formatValue, "Sprite format, \"compiled\" or \"RLE\". Default is \"compiled\".")->default_val("compiled");
+        app.add_option("-f,--format", formatValue, R"(Sprite format, "automatic", "compiled" or "RLE". Default is "automatic".)")->default_val("automatic");
         
         CLI11_PARSE(app, argc, argv);
 

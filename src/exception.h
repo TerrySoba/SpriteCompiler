@@ -2,6 +2,7 @@
 #define _EXCEPTION_H_INCLUDED
 
 #include <exception>
+#include <string>
 
 
 class Exception : public std::exception
@@ -13,10 +14,10 @@ public:
 
     const char* what() const noexcept override;
 
-    ~Exception();
+    ~Exception() = default;
 
 private:
-    char* m_msg;
+    std::string m_msg;
 };
 
 
